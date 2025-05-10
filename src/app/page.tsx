@@ -1,103 +1,137 @@
-import Image from "next/image";
+// app/page.tsx
+import Link from 'next/link';
+import { FaGamepad, FaChartLine, FaUserGraduate, FaLightbulb } from 'react-icons/fa';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100">
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+            Descubre tu vocación <span className="text-indigo-600">jugando</span>
+          </h1>
+          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
+            CareerCraft transforma el test vocacional en una experiencia lúdica para ayudarte a encontrar tu camino profesional.
+          </p>
+          <div className="mt-8 flex justify-center space-x-4">
+            <Link
+              href="/test"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              Comenzar Test
+              <FaGamepad className="ml-2" />
+            </Link>
+            <Link
+              href="/demo"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+            >
+              Ver Demo
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:text-center">
+            <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">Características</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              Una nueva forma de descubrir tu vocación
+            </p>
+          </div>
+
+          <div className="mt-10">
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="text-center">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
+                  <FaGamepad className="h-6 w-6" />
+                </div>
+                <h3 className="mt-5 text-lg leading-6 font-medium text-gray-900">Enfoque lúdico</h3>
+                <p className="mt-2 text-base text-gray-500">
+                  Juegos interactivos que evalúan tus habilidades e intereses sin que te des cuenta.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
+                  <FaChartLine className="h-6 w-6" />
+                </div>
+                <h3 className="mt-5 text-lg leading-6 font-medium text-gray-900">Resultados precisos</h3>
+                <p className="mt-2 text-base text-gray-500">
+                  Algoritmos avanzados que analizan tus respuestas para ofrecer recomendaciones personalizadas.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
+                  <FaUserGraduate className="h-6 w-6" />
+                </div>
+                <h3 className="mt-5 text-lg leading-6 font-medium text-gray-900">Orientación profesional</h3>
+                <p className="mt-2 text-base text-gray-500">
+                  No solo carreras, te mostramos rutas de formación y perspectivas laborales.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
+                  <FaLightbulb className="h-6 w-6" />
+                </div>
+                <h3 className="mt-5 text-lg leading-6 font-medium text-gray-900">Descubre talentos</h3>
+                <p className="mt-2 text-base text-gray-500">
+                  Identifica habilidades que no sabías que tenías y cómo aplicarlas profesionalmente.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials */}
+      <div className="bg-indigo-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-12">Lo que dicen nuestros usuarios</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p className="text-gray-600 italic">
+                Nunca me había divertido tanto haciendo un test vocacional. Los juegos hacen que sea muy natural responder.
+              </p>
+              <p className="mt-4 font-medium text-indigo-600">- María G., 17 años</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p className="text-gray-600 italic">
+                Los resultados fueron increíblemente precisos. Me recomendaron carreras que ni siquiera había considerado.
+              </p>
+              <p className="mt-4 font-medium text-indigo-600">- Javier R., 18 años</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p className="text-gray-600 italic">
+                Como orientador, recomiendo CareerCraft porque los jóvenes se comprometen más con este formato.
+              </p>
+              <p className="mt-4 font-medium text-indigo-600">- Prof. Laura M., Orientadora</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-indigo-700">
+        <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+            <span className="block">¿Listo para descubrir tu camino?</span>
+          </h2>
+          <p className="mt-4 text-lg leading-6 text-indigo-200">
+            Comienza ahora y en menos de 30 minutos tendrás recomendaciones personalizadas basadas en tus habilidades e intereses.
+          </p>
+          <Link
+            href="/register"
+            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 sm:w-auto"
+          >
+            Comenzar ahora
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }
