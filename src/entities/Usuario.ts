@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from "typeorm";
-import { MaestroEscuela } from "./MaestroEscuela";
-import { EstudianteMaestro } from "./EstudianteMaestro";
-import { ResultadoTestVocacional } from "./ResultadoTestVocacional";
-import { EstudianteCarreraInteres } from "./EstudianteCarreraInteres";
+import type { MaestroEscuela } from "./MaestroEscuela";
+import type { EstudianteMaestro } from "./EstudianteMaestro";
+import type { ResultadoTestVocacional } from "./ResultadoTestVocacional";
+import type { EstudianteCarreraInteres } from "./EstudianteCarreraInteres";
 
 @Entity()
 export class Usuario {
@@ -40,15 +40,15 @@ export class Usuario {
   activo!: boolean;
 
   // Relaciones
-  @OneToOne(() => MaestroEscuela, maestroEscuela => maestroEscuela.maestro)
+  @OneToOne("MaestroEscuela", (maestroEscuela: MaestroEscuela) => maestroEscuela.maestro)
   escuelaAsignada?: MaestroEscuela;
 
-  @OneToMany(() => EstudianteMaestro, estudianteMaestro => estudianteMaestro.maestro)
+  @OneToMany("EstudianteMaestro", (estudianteMaestro: EstudianteMaestro) => estudianteMaestro.maestro)
   estudiantesAsignados?: EstudianteMaestro[];
 
-  @OneToMany(() => ResultadoTestVocacional, resultado => resultado.estudiante)
+  @OneToMany("ResultadoTestVocacional", (resultado: ResultadoTestVocacional) => resultado.estudiante)
   resultadosTests?: ResultadoTestVocacional[];
 
-  @OneToMany(() => EstudianteCarreraInteres, interes => interes.estudiante)
+  @OneToMany("EstudianteCarreraInteres", (interes: EstudianteCarreraInteres) => interes.estudiante)
   carrerasInteres?: EstudianteCarreraInteres[];
 }

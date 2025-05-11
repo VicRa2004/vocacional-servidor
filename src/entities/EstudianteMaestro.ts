@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from "typeorm";
-import { Usuario } from "./Usuario";
+import type { Usuario } from "./Usuario";
 
 @Entity({ name: 'estudiante_maestro' })
 export class EstudianteMaestro {
@@ -13,11 +13,11 @@ export class EstudianteMaestro {
   fechaAsignacion!: Date;
 
   // Relaciones
-  @ManyToOne(() => Usuario, usuario => usuario.estudiantesAsignados)
+  @ManyToOne("Usuario", "estudiantesAsignados")
   @JoinColumn({ name: 'maestro_id' })
   maestro!: Usuario;
 
-  @ManyToOne(() => Usuario)
+  @ManyToOne("Usuario")
   @JoinColumn({ name: 'estudiante_id' })
   estudiante!: Usuario;
 }

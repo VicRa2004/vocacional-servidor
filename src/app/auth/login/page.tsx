@@ -2,8 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaGoogle, FaFacebook, FaGamepad } from 'react-icons/fa';
-import { signIn } from 'next-auth/react';
+import { FaGamepad } from 'react-icons/fa';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -18,29 +17,30 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // Aquí llamarías a tu función para manejar el login
-      await handleLogin({ email, password });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al iniciar sesión');
+      }
+
+      // Guardar token en localStorage
+      localStorage.setItem('auth-token', data.token);
       
-      // Redirigir después del login exitoso
+      // Guardar información del usuario si es necesario
+      localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
       router.push('/dashboard');
     } catch (err) {
+      console.error(err);
       setError(err instanceof Error ? err.message : 'Ocurrió un error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    setIsLoading(true);
-    setError('');
-    
-    try {
-      const result = await signIn(provider, { callbackUrl: '/dashboard' });
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
     } finally {
       setIsLoading(false);
     }
@@ -73,36 +73,6 @@ export default function LoginPage() {
             </div>
           </div>
         )}
-        
-        {/* Botones de login social */}
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => handleSocialLogin('google')}
-            disabled={isLoading}
-            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <FaGoogle className="h-5 w-5 text-red-500 mr-2" />
-            Google
-          </button>
-          
-          <button
-            onClick={() => handleSocialLogin('facebook')}
-            disabled={isLoading}
-            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <FaFacebook className="h-5 w-5 text-blue-600 mr-2" />
-            Facebook
-          </button>
-        </div>
-        
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">O ingresa con tu email</span>
-          </div>
-        </div>
         
         <form className="mt-4 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
@@ -189,21 +159,4 @@ export default function LoginPage() {
       </div>
     </main>
   );
-}
-
-// Función que recibirá los datos del formulario
-async function handleLogin(credentials: { email: string; password: string }) {
-  // Aquí implementarías tu lógica de autenticación
-  console.log('Credenciales recibidas:', credentials);
-  
-  // Simulando una respuesta del servidor
-  return new Promise<void>((resolve, reject) => {
-    setTimeout(() => {
-      if (credentials.email && credentials.password) {
-        resolve();
-      } else {
-        reject(new Error('Correo o contraseña inválidos'));
-      }
-    }, 1000);
-  });
 }

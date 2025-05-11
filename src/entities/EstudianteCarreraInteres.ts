@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
-import { Usuario } from "./Usuario";
-import { Carrera } from "./Carrera";
+import type { Usuario } from "./Usuario";
+import type { Carrera } from "./Carrera";
 
 @Entity({ name: 'estudiante_carrera_interes' })
 export class EstudianteCarreraInteres {
@@ -23,11 +23,11 @@ export class EstudianteCarreraInteres {
   origen?: string;
 
   // Relaciones
-  @ManyToOne(() => Usuario, usuario => usuario.carrerasInteres)
+  @ManyToOne("Usuario", usuario => usuario.carrerasInteres)
   @JoinColumn({ name: 'estudiante_id' })
   estudiante!: Usuario;
 
-  @ManyToOne(() => Carrera, carrera => carrera.estudiantesInteresados)
+  @ManyToOne("Carrera", carrera => carrera.estudiantesInteresados)
   @JoinColumn({ name: 'carrera_id' })
   carrera!: Carrera;
 }

@@ -1,10 +1,10 @@
-// src/data-source.ts
+import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { Usuario } from "@/entities/Usuario";
 import { Escuela } from "@/entities/Escuela";
-import {Carrera} from "@/entities/Carrera"
 import { MaestroEscuela } from "@/entities/MaestroEscuela";
 import { EstudianteMaestro } from "@/entities/EstudianteMaestro";
+import { Carrera } from "@/entities/Carrera";
 import { Juego } from "@/entities/Juego";
 import { PreguntaGeneral } from "@/entities/PreguntaGeneral";
 import { ResultadoTestVocacional } from "@/entities/ResultadoTestVocacional";
@@ -16,18 +16,18 @@ export const AppDataSource = new DataSource({
   port: 5432,
   username: "postgres",
   password: "television07",
-  database: "vocacional",
-  synchronize: true, // solo en desarrollo
+  database: "myapp",
+  synchronize: true,
   logging: true,
   entities: [
-        Usuario,
-        Escuela,
-        MaestroEscuela,
-        EstudianteMaestro,
-        Carrera,
-        Juego,
-        PreguntaGeneral,
-        ResultadoTestVocacional,
-        EstudianteCarreraInteres
-    ],
+    Usuario,
+    Escuela,
+    MaestroEscuela,
+    EstudianteMaestro,
+    Carrera,
+    Juego,
+    PreguntaGeneral,
+    ResultadoTestVocacional,
+    EstudianteCarreraInteres
+  ],
 });

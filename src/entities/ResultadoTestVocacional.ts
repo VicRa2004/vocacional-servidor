@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
-import { Usuario } from "./Usuario";
+import type { Usuario } from "./Usuario";
 
 @Entity({ name: 'resultados_test_vocacional' })
 export class ResultadoTestVocacional {
@@ -25,7 +25,7 @@ export class ResultadoTestVocacional {
   completado!: boolean;
 
   // Relación
-  @ManyToOne(() => Usuario, usuario => usuario.resultadosTests)
+  @ManyToOne("Usuario", (usuario: Usuario) => usuario.resultadosTests)
   @JoinColumn({ name: 'estudiante_id' })
   estudiante!: Usuario;
 }

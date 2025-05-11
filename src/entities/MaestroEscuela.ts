@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from "typeorm";
-import { Usuario } from "./Usuario";
-import { Escuela } from "./Escuela";
+import type { Usuario } from "./Usuario";
+import type { Escuela } from "./Escuela";
 
 @Entity({ name: 'maestro_escuela' })
 export class MaestroEscuela {
@@ -14,11 +14,12 @@ export class MaestroEscuela {
   fechaAsignacion!: Date;
 
   // Relaciones
-  @ManyToOne(() => Usuario, usuario => usuario.escuelaAsignada)
+  // Modificar las relaciones para usar type
+  @ManyToOne("Usuario", "escuelaAsignada")
   @JoinColumn({ name: 'maestro_id' })
   maestro!: Usuario;
 
-  @ManyToOne(() => Escuela, escuela => escuela.maestrosAsignados)
+  @ManyToOne("Escuela", "maestrosAsignados")
   @JoinColumn({ name: 'escuela_id' })
   escuela!: Escuela;
 }
