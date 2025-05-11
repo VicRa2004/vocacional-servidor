@@ -17,7 +17,7 @@ export default function ProtectedRoute({ children }: Props) {
   useEffect(() => {
     // Verificar si estamos en el cliente antes de acceder a localStorage
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('auth-token')
       
       if (!token) {
         router.push('/auth/login')

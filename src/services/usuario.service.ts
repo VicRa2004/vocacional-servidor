@@ -8,13 +8,11 @@ interface LoginResponse {
   token: string;
 }
 
-type CrearUsuarioDTO = Omit<Usuario, 'id'>;
+type CrearUsuario = Omit<Usuario, 'id' | "rol">;
 
 export class UsuarioService {
   static async login(correo: string, contrasena: string): Promise<LoginResponse> {
     try {
-
-
       const usuario = await usuarioRepository.findOneBy({ correo });
       
       if (!usuario) {
@@ -62,17 +60,60 @@ export class UsuarioService {
     }
   }
 
-  static obtenerPorId(id: number) {
+  static async obtenerTodos() {
+    return usuarioRepository.find();
+  }
+
+  static async obtenerPorId(id: number) {
     return usuarioRepository.findOneBy({ id });
+  }
+
+  static async actualizar(id: number, datos: Partial<Usuario>) {
+    await usuarioRepository.update(id, datos);
+    return this.obtenerPorId(id);
+  }
+
+  static async eliminar(id: number) {
+    return usuarioRepository.delete(id);
   }
 
   static obtenerPorCorreo(correo: string) {
     return usuarioRepository.findOneBy({ correo });
   }
 
-  static async crearUsuario(datos: CrearUsuarioDTO) {
+  static async crearUsuarioEstudiante(datos: CrearUsuario) {
     try {
-      const nuevoUsuario = usuarioRepository.create(datos);
+      const nuevoUsuario = usuarioRepository.create({
+        ...datos,
+        rol: "estudiante"
+      });
+
+      return await usuarioRepository.save(nuevoUsuario);
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error al crear el usuario');
+    }
+  }
+
+  static async crearUsuarioAdmin(datos: CrearUsuario) {
+    try {
+      const nuevoUsuario = usuarioRepository.create({
+        ...datos,
+        rol: "administrador"
+      });
+      return await usuarioRepository.save(nuevoUsuario);
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error al crear el usuario');
+    }
+  }
+
+  static async crearUsuarioMaestro(datos: CrearUsuario) {
+    try {
+      const nuevoUsuario = usuarioRepository.create({
+        ...datos,
+        rol: "maestro"
+      });
       return await usuarioRepository.save(nuevoUsuario);
     } catch (error) {
       console.log(error)

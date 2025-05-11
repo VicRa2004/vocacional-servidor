@@ -1,17 +1,21 @@
 import { NextResponse } from 'next/server';
+import {initDB} from "@/libs/db"
 import { UsuarioService } from '@/services/usuario.service';
 import { hash } from 'bcrypt';
 
 export async function POST(request: Request) {
   try {
+    await initDB();  // Mover esto al principio
+    
     const body = await request.json();
     const { 
       correo, 
       contrasena, 
-      nombre,
-      rol = 'ESTUDIANTE' // rol por defecto
+      nombre
     } = body;
 
+    console.log({correo, contrasena, nombre});
+    
     // Validaciones básicas
     if (!correo || !contrasena || !nombre) {
       return NextResponse.json(
@@ -49,12 +53,13 @@ export async function POST(request: Request) {
     // Hashear la contraseña
     const contrasenaHash = await hash(contrasena, 10);
 
+    await initDB();
+
     // Crear el usuario
-    const nuevoUsuario = await UsuarioService.crearUsuario({
+    const nuevoUsuario = await UsuarioService.crearUsuarioAdmin({
       correo,
       contrasenaHash,
       nombre,
-      rol,
       fechaRegistro: new Date(),
       activo: true,
     });

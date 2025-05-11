@@ -37,7 +37,7 @@ export default function LoginPage() {
       // Guardar información del usuario si es necesario
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
-      router.push('/dashboard');
+      router.push('/admin');
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : 'Ocurrió un error');
