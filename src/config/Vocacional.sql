@@ -53,28 +53,6 @@ CREATE TABLE carreras (
     competencias_clave TEXT
 );
 
--- Tabla de Juegos (para test vocacional)
-CREATE TABLE juegos (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    tipo_juego VARCHAR(50) NOT NULL, -- Ej: puzzle, simulación, cuestionario
-    nivel_dificultad VARCHAR(20), -- básico, intermedio, avanzado
-    duracion_estimada INT, -- en minutos
-    metadata JSONB, -- Para almacenar datos específicos del juego
-    activo BOOLEAN DEFAULT TRUE
-);
-
--- Tabla de Preguntas Generales (cuestionario inicial)
-CREATE TABLE preguntas_generales (
-    id SERIAL PRIMARY KEY,
-    texto TEXT NOT NULL,
-    tipo VARCHAR(20) NOT NULL, -- opcion_multiple, escala, abierta
-    categoria VARCHAR(50), -- personalidad, intereses, habilidades
-    opciones_respuesta JSONB, -- Almacena opciones directamente aquí en formato JSON
-    orden_visual INT -- Para controlar el orden de presentación
-);
-
 -- Tabla de Resultados de Test Vocacional (combinando cuestionario y juegos)
 CREATE TABLE resultados_test_vocacional (
     id SERIAL PRIMARY KEY,
@@ -98,42 +76,3 @@ CREATE TABLE estudiante_carrera_interes (
     interes DECIMAL(5,2), -- Porcentaje de interés (0-100)
     origen VARCHAR(50) -- 'test', 'manual', etc.
 );
-
--- Estudiantes por escuela (con base en su maestro asignado)
-SELECT e.nombre AS escuela, COUNT(em.estudiante_id) AS total_estudiantes
-FROM escuelas e
-JOIN maestro_escuela me ON me.escuela_id = e.id
-JOIN estudiante_maestro em ON em.maestro_id = me.maestro_id
-JOIN usuarios u ON u.id = em.estudiante_id
-WHERE u.rol = 'estudiante'
-GROUP BY e.nombre;
-
--- 2. Carreras más populares entre estudiantes
-SELECT c.nombre AS carrera, COUNT(eci.carrera_id) AS total_estudiantes
-FROM carreras c
-JOIN estudiante_carrera_interes eci ON eci.carrera_id = c.id
-GROUP BY c.nombre
-ORDER BY total_estudiantes DESC
-LIMIT 10;
-
--- 3. Distribución de intereses por área de conocimiento
-SELECT c.area_conocimiento, COUNT(*) AS total_intereses
-FROM estudiante_carrera_interes eci
-JOIN carreras c ON c.id = eci.carrera_id
-GROUP BY c.area_conocimiento;
-
--- 4. Resultados de test vocacional por estudiante
-SELECT u.nombre, rt.fecha_completado, 
-       jsonb_array_length(rt.carreras_sugeridas) AS carreras_sugeridas
-FROM resultados_test_vocacional rt
-JOIN usuarios u ON u.id = rt.estudiante_id
-WHERE u.rol = 'estudiante';
-
--- 5. Efectividad de juegos (correlación entre juego y carreras sugeridas)
-SELECT j.nombre AS juego, 
-       AVG((cs->>'porcentaje_ajuste')::numeric) AS promedio_ajuste
-FROM resultados_test_vocacional rt,
-     jsonb_array_elements(rt.resultados_juegos) AS juegos,
-     jsonb_array_elements(rt.carreras_sugeridas) AS cs
-JOIN juegos j ON j.id = (juegos->>'juego_id')::int
-GROUP BY j.nombre;

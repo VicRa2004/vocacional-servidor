@@ -2,17 +2,21 @@ import { NextResponse } from 'next/server';
 import { initDB } from "@/libs/db";
 import { UsuarioService } from '@/services/usuario.service';
 import { hash } from 'bcrypt';
+import { CreateUsuarioSchema} from "@/schemas/usuario"
+import {parseSchema} from '@/libs/validate-schema'
 
 // GET - Obtener todos los usuarios
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await initDB();
-    const usuarios = await UsuarioService.obtenerTodos();
+
+    const { searchParams } = new URL(request.url)
+
+    const rol = searchParams.get("rol");
+
+    const usuarios = await UsuarioService.obtenerPorRol(rol as "administrador" | "estudiante" | "maestro" | null);
     
-    // Eliminar contraseñas de la respuesta
-    const usuariosSeguros = usuarios.map(({ _contrasenaHash, ...usuario }) => usuario);
-    
-    return NextResponse.json(usuariosSeguros);
+    return NextResponse.json(usuarios);
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
     return NextResponse.json(
@@ -26,27 +30,17 @@ export async function POST(request: Request) {
   try {
     await initDB();
     const body = await request.json();
-    const { nombre, correo, contrasena, rol } = body;
 
-    // Validaciones básicas
-    if (!nombre || !correo || !contrasena || !rol) {
-      return NextResponse.json(
-        { error: 'Todos los campos son requeridos' },
-        { status: 400 }
-      );
-    }
+    console.log(body)
 
-    // Validar formato de correo
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo)) {
-      return NextResponse.json(
-        { error: 'Formato de correo inválido' },
-        { status: 400 }
-      );
-    }
-
+    // Validar el cuerpo de la solicitud
+    const newUser = parseSchema(CreateUsuarioSchema, {
+      contrasenaHash: body.contrasena,
+      ...body
+    });
+    
     // Verificar si el usuario ya existe
-    const usuarioExistente = await UsuarioService.obtenerPorCorreo(correo);
+    const usuarioExistente = await UsuarioService.obtenerPorCorreo(newUser.correo);
     if (usuarioExistente) {
       return NextResponse.json(
         { error: 'El correo ya está registrado' },
@@ -55,9 +49,12 @@ export async function POST(request: Request) {
     }
 
     // Hashear la contraseña
-    const contrasenaHash = await hash(contrasena, 10);
+    const contrasenaHash = await hash(newUser.contrasenaHash, 10);
 
     let nuevoUsuario;
+
+    const { nombre, correo, rol } = newUser;
+
     switch (rol) {
       case 'estudiante':
         nuevoUsuario = await UsuarioService.crearUsuarioEstudiante({

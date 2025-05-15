@@ -20,6 +20,8 @@ export async function GET(
 
     // Eliminar contraseña de la respuesta
     const { contrasenaHash, ...usuarioSeguro } = usuario;
+
+    console.log(contrasenaHash);
     
     return NextResponse.json(usuarioSeguro);
   } catch (error) {

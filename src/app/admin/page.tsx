@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaUsers, FaSchool, FaUserGraduate, FaChalkboardTeacher, FaGamepad, FaChartBar } from 'react-icons/fa';
+import { FaUsers, FaSchool, FaUserGraduate, FaGamepad, FaChartBar } from 'react-icons/fa';
 
 export default function DashboardPage() {
   const menuItems = [
@@ -20,18 +20,11 @@ export default function DashboardPage() {
       color: 'bg-green-500'
     },
     {
-      title: 'Estudiantes',
-      description: 'Gestionar estudiantes y sus asignaciones',
-      icon: FaUserGraduate,
-      href: '/admin/estudiantes',
-      color: 'bg-purple-500'
-    },
-    {
       title: 'Maestros',
-      description: 'Administrar maestros y sus escuelas',
-      icon: FaChalkboardTeacher,
+      description: 'Gestionar maestros y sus escuelas',
+      icon: FaUserGraduate,
       href: '/admin/maestros',
-      color: 'bg-yellow-500'
+      color: 'bg-purple-500'
     },
     {
       title: 'Carreras',

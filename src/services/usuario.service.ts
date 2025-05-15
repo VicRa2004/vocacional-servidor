@@ -8,6 +8,10 @@ interface LoginResponse {
   token: string;
 }
 
+const cleanUsers = (users: Usuario[]) => {
+  return users.map(({ contrasenaHash: _, ...usuario }) => usuario);
+}
+
 type CrearUsuario = Omit<Usuario, 'id' | "rol">;
 
 export class UsuarioService {
@@ -61,7 +65,22 @@ export class UsuarioService {
   }
 
   static async obtenerTodos() {
-    return usuarioRepository.find();
+    const users = await usuarioRepository.find();
+
+    return cleanUsers(users);
+  }
+
+  static async obtenerPorRol(rol: "administrador" | "estudiante" | "maestro" | null) {
+
+    if (!rol) {
+      const users = await usuarioRepository.find();
+
+      return cleanUsers(users);
+    }
+
+    const users = await usuarioRepository.findBy({ rol });
+
+    return cleanUsers(users);
   }
 
   static async obtenerPorId(id: number) {
@@ -79,6 +98,19 @@ export class UsuarioService {
 
   static obtenerPorCorreo(correo: string) {
     return usuarioRepository.findOneBy({ correo });
+  }
+
+  static async crearUsuario(datos: Usuario) {
+    try {
+      const nuevoUsuario = usuarioRepository.create({
+        ...datos,
+        rol: "administrador"
+      });
+      return await usuarioRepository.save(nuevoUsuario);
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error al crear el usuario');
+    }
   }
 
   static async crearUsuarioEstudiante(datos: CrearUsuario) {

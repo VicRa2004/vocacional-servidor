@@ -5,8 +5,6 @@ import { Escuela } from "@/entities/Escuela";
 import { MaestroEscuela } from "@/entities/MaestroEscuela";
 import { EstudianteMaestro } from "@/entities/EstudianteMaestro";
 import { Carrera } from "@/entities/Carrera";
-import { Juego } from "@/entities/Juego";
-import { PreguntaGeneral } from "@/entities/PreguntaGeneral";
 import { ResultadoTestVocacional } from "@/entities/ResultadoTestVocacional";
 import { EstudianteCarreraInteres } from "@/entities/EstudianteCarreraInteres";
 
@@ -25,8 +23,6 @@ export const AppDataSource = new DataSource({
     MaestroEscuela,
     EstudianteMaestro,
     Carrera,
-    Juego,
-    PreguntaGeneral,
     ResultadoTestVocacional,
     EstudianteCarreraInteres
   ],

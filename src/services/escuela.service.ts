@@ -3,7 +3,7 @@ import { Escuela } from '@/entities/Escuela';
 
 export class EscuelaService {
     
-  static crear(data: Partial<Escuela>) {
+  static crear(data: Omit<Escuela, "id">) {
     const nuevaEscuela = escuelaRepository.create(data);
     return escuelaRepository.save(nuevaEscuela);
   }
