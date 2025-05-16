@@ -21,3 +21,25 @@ export type Estudiante = Pick<UsuarioBase,
   'id' | 'nombre' | 'correo' | 'contrasenaHash' | 'rol' | 'fechaNacimiento' | 
   'genero' | 'nivelAcademico' | 'fechaRegistro' | 'activo'
 >;
+
+export type GetEstudiante = Estudiante & {
+  fechaRegistro: string,
+  fechaNacimiento: string,
+}
+
+export type GetMaestro = Maestro & {
+  fechaRegistro: string,
+  fechaNacimiento: string,
+}
+
+export type GetAdministrador = Administrador & {
+  fechaRegistro: string,
+  fechaNacimiento: string,
+}
+
+// Tipo para crear
+export type CrearAdministrador = Omit<Administrador, 'id'>;
+
+export type CrearMaestro = Omit<Maestro, 'id'>;
+
+export type CrearEstudiante = Omit<Estudiante, 'id'>;

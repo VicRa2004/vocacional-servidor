@@ -5,7 +5,7 @@ CREATE TABLE usuarios (
     correo VARCHAR(100) UNIQUE NOT NULL,
     contrasena_hash VARCHAR(255) NOT NULL,
     rol VARCHAR(20) NOT NULL CHECK (rol IN ('administrador', 'maestro', 'estudiante')),
-    fecha_nacimiento DATE,
+    fecha_nacimiento DATE NOT NULL,
     genero VARCHAR(10),
     nivel_academico VARCHAR(50),
     departamento VARCHAR(50), -- Solo aplica para maestros

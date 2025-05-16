@@ -1,3 +1,4 @@
+import { Breadcrumb } from "@/components/Breadcrumb";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Layout({
@@ -7,6 +8,7 @@ export default function Layout({
   }>) {
     return (
       <ProtectedRoute>
+        <Breadcrumb />
         {children}
       </ProtectedRoute>
     );

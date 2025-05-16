@@ -21,11 +21,11 @@ export class Usuario {
   @Column({ length: 20 })
   rol!: 'administrador' | 'maestro' | 'estudiante';
 
-  @Column({ name: 'fecha_nacimiento', type: 'date', nullable: true })
-  fechaNacimiento?: Date;
+  @Column({ name: 'fecha_nacimiento', type: 'date', nullable: false })
+  fechaNacimiento!: Date;
 
-  @Column({ length: 10, nullable: true })
-  genero?: string;
+  @Column({ length: 10, nullable: false })
+  genero!: string;
 
   @Column({ name: 'nivel_academico', length: 50, nullable: true })
   nivelAcademico?: string;

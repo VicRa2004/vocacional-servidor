@@ -33,14 +33,18 @@ export async function POST(request: Request) {
 
     console.log(body)
 
+    const fechaNacimiento = new Date(body.fechaNacimiento);
+
     // Validar el cuerpo de la solicitud
     const newUser = parseSchema(CreateUsuarioSchema, {
-      contrasenaHash: body.contrasena,
-      ...body
+      ...body,
+      contrasenaHash: body.contrasena || body.contrasenaHash,
+      fechaNacimiento,
     });
     
     // Verificar si el usuario ya existe
     const usuarioExistente = await UsuarioService.obtenerPorCorreo(newUser.correo);
+    
     if (usuarioExistente) {
       return NextResponse.json(
         { error: 'El correo ya está registrado' },
@@ -53,13 +57,12 @@ export async function POST(request: Request) {
 
     let nuevoUsuario;
 
-    const { nombre, correo, rol } = newUser;
+    const { rol } = newUser;
 
     switch (rol) {
       case 'estudiante':
         nuevoUsuario = await UsuarioService.crearUsuarioEstudiante({
-          nombre,
-          correo,
+          ...newUser,
           contrasenaHash,
           fechaRegistro: new Date(),
           activo: true,
@@ -67,8 +70,7 @@ export async function POST(request: Request) {
         break;
       case 'maestro':
         nuevoUsuario = await UsuarioService.crearUsuarioMaestro({
-          nombre,
-          correo,
+          ...newUser,
           contrasenaHash,
           fechaRegistro: new Date(),
           activo: true,
@@ -76,8 +78,7 @@ export async function POST(request: Request) {
         break;
       case 'administrador':
         nuevoUsuario = await UsuarioService.crearUsuarioAdmin({
-          nombre,
-          correo,
+          ...newUser,
           contrasenaHash,
           fechaRegistro: new Date(),
           activo: true,

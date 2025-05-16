@@ -1,30 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const useFetch = <T>(url: string, options?: RequestInit) => {
-
     const [loading, setLoading] = useState(true); 
     const [data, setData] = useState<T | null>(null);
     const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
-                }
-                const data = await response.json();
-                setData(data);
-            } catch (error) {
-                setError(error as Error);
-            } finally {
-                setLoading(false);
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
             }
-        };
+            const data = await response.json();
+            setData(data);
+            setError(null);
+        } catch (error) {
+            setError(error as Error);
+        } finally {
+            setLoading(false);
+        }
+    }, [url, options]);
 
+    useEffect(() => {
         fetchData();
-    }, [url]);
+    }, [fetchData]);
 
-    return {data, loading, error}
-}
+    // Función para recargar manualmente
+    const refetch = useCallback(() => {
+        fetchData();
+    }, [fetchData]);
+
+    return { data, loading, error, refetch };
+};

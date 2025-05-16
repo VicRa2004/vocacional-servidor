@@ -10,11 +10,11 @@ export const UsuarioSchema = z.object({
   correo: z.string().max(100).email(),
   contrasenaHash: z.string().max(255),
   rol: RolSchema,
-  fechaNacimiento: z.date().optional(),
-  genero: z.string().max(10).optional(),
+  fechaNacimiento: z.date(),
+  genero: z.string().max(10),
   nivelAcademico: z.string().max(50).optional(),
   departamento: z.string().max(50).optional(),
-  fechaRegistro: z.date().optional(),
+  fechaRegistro: z.date().optional(), 
   activo: z.boolean().default(true),
   
   // Relaciones (opcionales)
