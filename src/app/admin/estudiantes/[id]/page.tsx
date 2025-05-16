@@ -2,20 +2,20 @@
 
 import { use } from "react";
 import { useFetch } from "@/hooks/use-fetch";
-import { CreateForm } from "@/components/admin/maestros/CreateForm";
-import { GetMaestro } from "@/types/usuarios";
+import { CreateForm } from "@/components/admin/estudiantes/CreateForm";
+import { GetEstudiante } from "@/types/usuarios";
 
 export default function Page({ params }: { params: { id: string } }) {
   // Desestructuración después de usar use()
   const { id } = use<{ id: string }>(params);
 
   const {
-    data: maestro,
+    data: estudiante,
     error,
     loading,
-  } = useFetch<GetMaestro>(`/api/usuarios/${id}`);
+  } = useFetch<GetEstudiante>(`/api/usuarios/${id}`);
 
-  console.log(maestro);
+  console.log(estudiante);
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -43,15 +43,15 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
           )}
 
-          {maestro && (
+          {estudiante && (
             <CreateForm
               action="UPDATE"
-              maestro={{
-                ...maestro,
+              estudiante={{
+                ...estudiante,
                 contrasenaHash: "",
-                fechaNacimiento: maestro.fechaNacimiento,
-                fechaRegistro: maestro.fechaRegistro,
-                departamento: maestro.departamento || "",
+                fechaNacimiento: estudiante.fechaNacimiento,
+                fechaRegistro: estudiante.fechaRegistro,
+                nivelAcademico: estudiante.nivelAcademico || "",
               }}
             />
           )}

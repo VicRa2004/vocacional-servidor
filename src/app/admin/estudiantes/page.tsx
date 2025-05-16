@@ -1,34 +1,34 @@
 'use client'
 
 import { useFetch } from "@/hooks/use-fetch";
-import type { GetMaestro } from "@/types/usuarios";
+import type { GetEstudiante } from "@/types/usuarios";
 import { Dialog, DialogPanel, DialogTitle, Description } from "@headlessui/react";
 import Link from "next/link";
 import { useState } from "react";
 
 const PageMaestros = () => {
-    const { data: maestros, loading, error, refetch } = useFetch<GetMaestro[]>("/api/usuarios?rol=maestro");
+    const { data: estudiantes, loading, error, refetch } = useFetch<GetEstudiante[]>("/api/usuarios?rol=estudiante");
     
     // Estado para el modal de eliminación
     const [deleteModal, setDeleteModal] = useState({
         isOpen: false,
-        maestroId: null as number | null,
-        maestroNombre: ''
+        estudianteId: null as number | null,
+        estudianteNombre: ''
     });
 
     const handleDelete = async () => {
-        if (!deleteModal.maestroId) return;
+        if (!deleteModal.estudianteId) return;
         
         try {
-            await fetch(`/api/usuarios/${deleteModal.maestroId}`, {
+            await fetch(`/api/usuarios/${deleteModal.estudianteId}`, {
                 method: 'DELETE'
             });
             
             // Recargar la lista de maestros
             refetch();
-            setDeleteModal({ isOpen: false, maestroId: null, maestroNombre: '' });
+            setDeleteModal({ isOpen: false, estudianteId: null, estudianteNombre: '' });
         } catch (err) {
-            console.error('Error al eliminar maestro:', err);
+            console.error('Error al eliminar estudiante:', err);
         }
     };
 
@@ -37,7 +37,7 @@ const PageMaestros = () => {
             {/* Modal de confirmación de eliminación */}
             <Dialog 
                 open={deleteModal.isOpen} 
-                onClose={() => setDeleteModal({ isOpen: false, maestroId: null, maestroNombre: '' })}
+                onClose={() => setDeleteModal({ isOpen: false, estudianteId: null, estudianteNombre: '' })}
                 className="relative z-50"
             >
                 {/* Fondo oscuro */}
@@ -51,7 +51,7 @@ const PageMaestros = () => {
                         </DialogTitle>
                         
                         <Description className="mt-2">
-                            ¿Estás seguro que deseas eliminar al maestro {deleteModal.maestroNombre}?
+                            ¿Estás seguro que deseas eliminar al maestro {deleteModal.estudianteNombre}?
                         </Description>
                         
                         <p className="mt-2 text-sm text-gray-500">
@@ -60,7 +60,7 @@ const PageMaestros = () => {
 
                         <div className="mt-4 flex justify-end gap-3">
                             <button
-                                onClick={() => setDeleteModal({ isOpen: false, maestroId: null, maestroNombre: '' })}
+                                onClick={() => setDeleteModal({ isOpen: false, estudianteId: null, estudianteNombre: '' })}
                                 className="px-4 py-2 text-gray-700 hover:text-gray-900"
                             >
                                 Cancelar
@@ -79,13 +79,13 @@ const PageMaestros = () => {
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800">Gestión de Maestros</h1>
+                    <h1 className="text-3xl font-bold text-gray-800">Gestión de Estudiante</h1>
                     <Link 
-                        href="/admin/maestros/create"
+                        href="/admin/estudiantes/create"
                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                     >
                         <span>+</span>
-                        <span>Nuevo Maestro</span>
+                        <span>Nuevo Estudiante</span>
                     </Link>
                 </div>
 
@@ -102,36 +102,36 @@ const PageMaestros = () => {
                     </div>
                 )}
 
-                {/* Tabla de maestros */}
-                {maestros && (
+                {/* Tabla de estudiantes */}
+                {estudiantes && (
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-100">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niivel Academico</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {maestros.map((maestro) => (
-                                    <tr key={maestro.id} className="hover:bg-gray-50 transition-colors">
+                                {estudiantes.map((estudiante) => (
+                                    <tr key={estudiante.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{maestro.nombre}</div>
-                                            <div className="text-sm text-gray-500">{new Date(maestro.fechaNacimiento).toLocaleDateString()}</div>
+                                            <div className="text-sm font-medium text-gray-900">{estudiante.nombre}</div>
+                                            <div className="text-sm text-gray-500">{new Date(estudiante.fechaNacimiento).toLocaleDateString()}</div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{maestro.correo}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{maestro.departamento}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{estudiante.correo}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{estudiante.nivelAcademico}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${maestro.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                                {maestro.activo ? 'Activo' : 'Inactivo'}
+                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${estudiante.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                                {estudiante.activo ? 'Activo' : 'Inactivo'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <Link 
-                                                href={`/admin/maestros/${maestro.id}`}
+                                                href={`/admin/estudiantes/${estudiante.id}`}
                                                 className="text-indigo-600 hover:text-indigo-900 mr-4"
                                             >
                                                 Editar
@@ -139,8 +139,8 @@ const PageMaestros = () => {
                                             <button 
                                                 onClick={() => setDeleteModal({ 
                                                     isOpen: true, 
-                                                    maestroId: maestro.id, 
-                                                    maestroNombre: maestro.nombre 
+                                                    estudianteId: estudiante.id, 
+                                                    estudianteNombre: estudiante.nombre 
                                                 })}
                                                 className="text-red-600 hover:text-red-900"
                                             >

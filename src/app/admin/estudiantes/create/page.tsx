@@ -1,4 +1,4 @@
-import {CreateForm} from "@/components/admin/maestros/CreateForm"
+import {CreateForm} from "@/components/admin/estudiantes/CreateForm"
 
 const Page = () => {
 
@@ -8,8 +8,8 @@ const Page = () => {
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
         <div className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Registrar Nuevo Maestro</h1>
-            <p className="mt-2 text-gray-600">Complete el formulario para agregar un nuevo docente</p>
+            <h1 className="text-3xl font-bold text-gray-800">Registrar Nuevo Estudiante</h1>
+            <p className="mt-2 text-gray-600">Complete el formulario para agregar un nuevo estudiante</p>
           </div>
 
           <CreateForm action="CREATE" /> 

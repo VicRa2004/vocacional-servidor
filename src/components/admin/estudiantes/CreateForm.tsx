@@ -1,28 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { CrearMaestro } from "@/types/usuarios";
+import { CrearEstudiante } from "@/types/usuarios";
 import { useMutation } from "@/hooks/use-mutation";
 import { redirect } from "next/navigation";
 
 interface CreateFormProps {
-    maestro?: {
+    estudiante?: {
     nombre: string,
     correo: string,
     activo: boolean,
     contrasenaHash: string,
     genero:string,
     fechaRegistro: string,
-    departamento: string,
+    nivelAcademico: string,
     fechaNacimiento: string,
     id: number
   },
   action: "CREATE" | "UPDATE"
 }
 
-export const CreateForm = ({maestro, action}: CreateFormProps) => {
-  const { mutate, loading, error } = useMutation<CrearMaestro, null>(
-    `/api/usuarios${maestro ? `/${maestro.id}` : ""}`,
+export const CreateForm = ({estudiante, action}: CreateFormProps) => {
+  const { mutate, loading, error } = useMutation<CrearEstudiante, null>(
+    `/api/usuarios${estudiante ? `/${estudiante.id}` : ""}`,
   );
 
   const [form, setForm] = useState({
@@ -32,12 +32,12 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
     contrasenaHash: "",
     genero: "",
     fechaRegistro: "",
-    departamento: "",
+    nivelAcademico: "",
     fechaNacimiento: "",
-    ...maestro,
+    ...estudiante,
   });
 
-  const message = action == "CREATE" ? "Crear Maestro" : "Actualizar Maestro";
+  const message = action == "CREATE" ? "Crear Estudiante" : "Actualizar Estudiante";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -59,7 +59,7 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
         await mutate(
         {
           ...form,
-          rol: "maestro",
+          rol: "estudiante",
           fechaNacimiento: new Date(form.fechaNacimiento),
           fechaRegistro: new Date(),
         },
@@ -69,7 +69,7 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
         await mutate(
             {
             ...form,
-            rol: "maestro",
+            rol: "estudiante",
             fechaNacimiento: new Date(form.fechaNacimiento),
             fechaRegistro: new Date(form.fechaRegistro),
             },
@@ -80,7 +80,7 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
     console.log(error);
 
     if (!error) {
-      redirect("/admin/maestros");
+      redirect("/admin/estudiantes");
     }
   };
 
@@ -167,19 +167,18 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
           </select>
         </div>
 
-        {/* Departamento */}
         <div>
           <label
-            htmlFor="departamento"
+            htmlFor="nivelAcademico"
             className="block text-sm font-medium text-gray-700"
           >
-            Departamento
+            Nivel Academico
           </label>
           <input
             type="text"
-            id="departamento"
-            name="departamento"
-            value={form.departamento}
+            id="nivelAcademico"
+            name="nivelAcademico"
+            value={form.nivelAcademico}
             onChange={handleChange}
             required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
