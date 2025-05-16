@@ -1,202 +1,219 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaUserPlus } from 'react-icons/fa';
-import CrearUsuarioModal from './components/CrearUsuarioModal';
-import EditarUsuarioModal from './components/EditarUsuarioModal';
-import ConfirmarEliminarModal from './components/ConfirmarEliminarModal';
+import { useFetch } from "@/hooks/use-fetch";
+import type { GetUsuario } from "@/types/usuarios";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Description,
+} from "@headlessui/react";
+import Link from "next/link";
+import { useState } from "react";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
-interface Usuario {
-  id: number;
-  nombre: string;
-  correo: string;
-  activo: boolean;
-  rol: "administrador" | "estudiante" | "maestro";
-}
+const Pageusuarios = () => {
+  const {
+    data: usuarios,
+    loading,
+    error,
+    refetch,
+  } = useFetch<GetUsuario[]>("/api/usuarios");
 
-export default function UsuariosPage() {
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<Usuario | null>(null);
+  // Estado para el modal de eliminación
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    usuarioId: null as number | null,
+    usuarioNombre: "",
+  });
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<Usuario | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const handleDelete = async () => {
+    if (!deleteModal.usuarioId) return;
 
-  const handleDeleteClick = (usuario: Usuario) => {
-    setUserToDelete(usuario);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!userToDelete) return;
-    
-    setIsDeleting(true);
     try {
-      const response = await fetch(`/api/usuarios/${userToDelete.id}`, {
-        method: 'DELETE',
+      await fetch(`/api/usuarios/${deleteModal.usuarioId}`, {
+        method: "DELETE",
       });
 
-      if (!response.ok) {
-        throw new Error('Error al eliminar usuario');
-      }
-
-      await cargarUsuarios();
-      setIsDeleteModalOpen(false);
-      setUserToDelete(null);
-    } catch (error) {
-      setError('Error al eliminar el usuario');
-      console.error(error);
-    } finally {
-      setIsDeleting(false);
+      // Recargar la lista de usuarios
+      refetch();
+      setDeleteModal({ isOpen: false, usuarioId: null, usuarioNombre: "" });
+    } catch (err) {
+      console.error("Error al eliminar usuario:", err);
     }
   };
-
-  useEffect(() => {
-    cargarUsuarios();
-  }, []);
-
-  const cargarUsuarios = async () => {
-    try {
-      const response = await fetch('/api/usuarios');
-
-      console.log(response);
-
-      if (!response.ok) {
-        throw new Error('Error al cargar usuarios');
-      }
-      const data = await response.json();
-      setUsuarios(data);
-    } catch (error) {
-      setError('Error al cargar los usuarios');
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-      </div>
-    );
-  }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
-        <button
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-indigo-700 transition-colors"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <FaUserPlus />
-          Nuevo Usuario
-        </button>
-      </div>
+    <main className="flex-grow p-8">
+      {/* Modal de confirmación de eliminación */}
+      <Dialog
+        open={deleteModal.isOpen}
+        onClose={() =>
+          setDeleteModal({ isOpen: false, usuarioId: null, usuarioNombre: "" })
+        }
+        className="relative z-50"
+      >
+        {/* Fondo oscuro */}
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
+        {/* Contenedor del modal */}
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <DialogPanel className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <DialogTitle className="text-lg font-bold text-gray-900">
+              Confirmar eliminación
+            </DialogTitle>
+
+            <Description className="mt-2">
+              ¿Estás seguro que deseas eliminar al usuario{" "}
+              {deleteModal.usuarioNombre}?
+            </Description>
+
+            <p className="mt-2 text-sm text-gray-500">
+              Esta acción no se puede deshacer. Todos los datos asociados a este
+              usuario se perderán permanentemente.
+            </p>
+
+            <div className="mt-4 flex justify-end gap-3">
+              <button
+                onClick={() =>
+                  setDeleteModal({
+                    isOpen: false,
+                    usuarioId: null,
+                    usuarioNombre: "",
+                  })
+                }
+                className="px-4 py-2 text-gray-700 hover:text-gray-900"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Eliminar
+              </button>
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
+          </DialogPanel>
         </div>
-      )}
+      </Dialog>
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
-              <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>Rol</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {usuarios.map((usuario) => (
-              <tr key={usuario.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{usuario.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{usuario.nombre}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{usuario.correo}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 first-letter:uppercase">{usuario.rol}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    usuario.activo 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {usuario.activo ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => {
-                        setSelectedUser(usuario);
-                        setIsEditModalOpen(true);
-                      }}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      <FaEdit className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(usuario)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <FaTrash className="h-5 w-5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Gestión de Usuarios
+          </h1>
+          <Link
+            href="/admin/usuarios/create"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <span>+</span>
+            <span>Nuevo usuario</span>
+          </Link>
+        </div>
+
+        {/* Estado de carga y errores */}
+        {loading && (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+            <p>Error: {error.message}</p>
+          </div>
+        )}
+
+        {/* Tabla de usuarios */}
+        {usuarios && (
+          <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nombre
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Correo
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Rol
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {usuarios.map((usuario) => (
+                  <tr
+                    key={usuario.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {usuario.nombre}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {new Date(usuario.fechaNacimiento).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {usuario.correo}
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {usuario.rol}
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          usuario.activo
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {usuario.activo ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center space-x-4">
+                        <Link
+                          href={`/admin/usuarios/${usuario.id}`}
+                          className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                        >
+                          <FaEdit className="mr-1" />
+                          Editar
+                        </Link>
+                        <button
+                          onClick={() =>
+                            setDeleteModal({
+                              isOpen: true,
+                              usuarioId: usuario.id,
+                              usuarioNombre: usuario.nombre,
+                            })
+                          }
+                          className="flex items-center text-red-600 hover:text-red-900"
+                        >
+                          <FaTrash className="mr-1" />
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-
-      <CrearUsuarioModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onUsuarioCreado={cargarUsuarios}
-      />
-
-      {selectedUser && (
-        <EditarUsuarioModal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setSelectedUser(null);
-          }}
-          onUsuarioActualizado={cargarUsuarios}
-          usuario={selectedUser}
-        />
-      )}
-
-      {userToDelete && (
-        <ConfirmarEliminarModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-            setUserToDelete(null);
-          }}
-          onConfirm={handleConfirmDelete}
-          nombreUsuario={userToDelete.nombre}
-          isLoading={isDeleting}
-        />
-      )}
-    </div>
+    </main>
   );
-}
+};
+
+export default Pageusuarios;

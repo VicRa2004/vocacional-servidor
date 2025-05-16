@@ -7,7 +7,7 @@ type UsuarioBase = Omit<Usuario, 'escuelaAsignada' | 'estudiantesAsignados' | 'r
 
 // Tipo para Administrador (solo campos generales)
 export type Administrador = Pick<UsuarioBase, 
-  'id' | 'nombre' | 'correo' | 'contrasenaHash' | 'rol' | 'fechaRegistro' | 'activo'
+  'id' | 'nombre' | 'correo' | 'contrasenaHash' | 'rol' | 'fechaRegistro' | 'activo' | 'fechaNacimiento' | 'genero'
 >;
 
 // Tipo para Maestro (campos generales + departamento)
@@ -21,6 +21,10 @@ export type Estudiante = Pick<UsuarioBase,
   'id' | 'nombre' | 'correo' | 'contrasenaHash' | 'rol' | 'fechaNacimiento' | 
   'genero' | 'nivelAcademico' | 'fechaRegistro' | 'activo'
 >;
+
+export type GetUsuario = Administrador & {
+  ro: RolUsuario
+}
 
 export type GetEstudiante = Estudiante & {
   fechaRegistro: string,
