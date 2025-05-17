@@ -4,26 +4,36 @@ import { useState } from "react";
 import { CrearMaestro } from "@/types/usuarios";
 import { useMutation } from "@/hooks/use-mutation";
 import { redirect } from "next/navigation";
+import { useFetch } from "@/hooks/use-fetch";
+import type { Escuela } from "@/entities/Escuela";
 
 interface CreateFormProps {
-    maestro?: {
-    nombre: string,
-    correo: string,
-    activo: boolean,
-    contrasenaHash: string,
-    genero:string,
-    fechaRegistro: string,
-    departamento: string,
-    fechaNacimiento: string,
-    id: number
-  },
-  action: "CREATE" | "UPDATE"
+  maestro?: {
+    nombre: string;
+    correo: string;
+    activo: boolean;
+    contrasenaHash: string;
+    genero: string;
+    fechaRegistro: string;
+    departamento: string;
+    fechaNacimiento: string;
+    escuela?: {
+      id: number;
+    };
+    id: number;
+  };
+  action: "CREATE" | "UPDATE";
 }
 
-export const CreateForm = ({maestro, action}: CreateFormProps) => {
+export const CreateForm = ({ maestro, action }: CreateFormProps) => {
   const { mutate, loading, error } = useMutation<CrearMaestro, null>(
-    `/api/usuarios${maestro ? `/${maestro.id}` : ""}`,
+    `/api/usuarios${maestro ? `/${maestro.id}` : ""}`
   );
+
+  const { data, loading: loadingEscuelas } =
+    useFetch<Escuela[]>("/api/escuelas");
+
+  console.log(data);
 
   const [form, setForm] = useState({
     nombre: "",
@@ -46,17 +56,24 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
     const checked =
       type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
 
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    if (name === "escuela") {
+      setForm((prev) => ({
+        ...prev,
+        escuela: { id: Number(value) }, // Aquí parseamos el string a número
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (action == "CREATE") {
-        await mutate(
+      await mutate(
         {
           ...form,
           rol: "maestro",
@@ -66,17 +83,17 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
         "POST"
       );
     } else {
-        await mutate(
-            {
-            ...form,
-            rol: "maestro",
-            fechaNacimiento: new Date(form.fechaNacimiento),
-            fechaRegistro: new Date(form.fechaRegistro),
-            },
-            "PUT"
-        );
+      await mutate(
+        {
+          ...form,
+          rol: "maestro",
+          fechaNacimiento: new Date(form.fechaNacimiento),
+          fechaRegistro: new Date(form.fechaRegistro),
+        },
+        "PUT"
+      );
     }
-    
+
     console.log(error);
 
     if (!error) {
@@ -219,6 +236,34 @@ export const CreateForm = ({maestro, action}: CreateFormProps) => {
             Activo
           </label>
         </div>
+      </div>
+
+      {/* Selección de Escuela */}
+      <div>
+        <label
+          htmlFor="escuela"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Escuela
+        </label>
+        {loadingEscuelas ? (
+          <p>Cargando escuelas...</p>
+        ) : (
+          <select
+            id="escuela"
+            name="escuela"
+            value={form.escuela?.id || ""}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+          >
+            <option value="">Seleccione una escuela...</option>
+            {data?.map((escuela) => (
+              <option key={escuela.id} value={escuela.id}>
+                {escuela.nombre}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Botones */}

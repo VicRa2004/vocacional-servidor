@@ -13,8 +13,12 @@ export type Administrador = Pick<UsuarioBase,
 // Tipo para Maestro (campos generales + departamento)
 export type Maestro = Pick<UsuarioBase, 
   'id' | 'nombre' | 'correo' | 'contrasenaHash' | 'rol' | 'fechaNacimiento' | 
-  'genero' | 'departamento' | 'fechaRegistro' | 'activo'
->;
+  'genero' | 'departamento' | 'fechaRegistro' | 'activo' 
+>  & {
+  escuela?: {
+    id: number,
+  }
+};
 
 // Tipo para Estudiante (campos generales + nivelAcademico + carrerasInteres)
 export type Estudiante = Pick<UsuarioBase, 
@@ -31,7 +35,10 @@ export type GetEstudiante = Estudiante & {
   fechaNacimiento: string,
 }
 
-export type GetMaestro = Maestro & {
+export type GetMaestro = Pick<UsuarioBase, 
+  'id' | 'nombre' | 'correo' | 'contrasenaHash' | 'rol' | 'fechaNacimiento' | 
+  'genero' | 'departamento' | 'fechaRegistro' | 'activo' | 'escuela'
+> & {
   fechaRegistro: string,
   fechaNacimiento: string,
 }

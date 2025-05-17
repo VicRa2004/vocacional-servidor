@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { MaestroEscuela } from "./MaestroEscuela";
+import { Usuario } from "./Usuario";
 
 @Entity()
 export class Escuela {
@@ -30,6 +30,7 @@ export class Escuela {
   @Column({ default: true })
   activa!: boolean;
 
-  @OneToMany(() => MaestroEscuela, maestroEscuela => maestroEscuela.escuela)
-  maestrosAsignados?: MaestroEscuela[];
+  @OneToMany(() => Usuario, (usuario) => usuario.escuela)
+  usuarios!: Usuario[];
+
 }

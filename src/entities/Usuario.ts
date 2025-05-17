@@ -1,8 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from "typeorm";
-import type { MaestroEscuela } from "./MaestroEscuela";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  JoinColumn
+} from "typeorm";
 import type { EstudianteMaestro } from "./EstudianteMaestro";
 import type { ResultadoTestVocacional } from "./ResultadoTestVocacional";
 import type { EstudianteCarreraInteres } from "./EstudianteCarreraInteres";
+import { Escuela } from "./Escuela";
 
 @Entity()
 export class Usuario {
@@ -39,9 +46,9 @@ export class Usuario {
   @Column({ default: true })
   activo!: boolean;
 
-  // Relaciones
-  @OneToOne("MaestroEscuela", (maestroEscuela: MaestroEscuela) => maestroEscuela.maestro)
-  escuelaAsignada?: MaestroEscuela;
+  @ManyToOne(() => Escuela, (escuela) => escuela.usuarios, { nullable: true })
+  @JoinColumn({ name: "id_escuela" })
+  escuela?: Escuela;
 
   @OneToMany("EstudianteMaestro", (estudianteMaestro: EstudianteMaestro) => estudianteMaestro.maestro)
   estudiantesAsignados?: EstudianteMaestro[];

@@ -2,7 +2,6 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { Usuario } from "@/entities/Usuario";
 import { Escuela } from "@/entities/Escuela";
-import { MaestroEscuela } from "@/entities/MaestroEscuela";
 import { EstudianteMaestro } from "@/entities/EstudianteMaestro";
 import { Carrera } from "@/entities/Carrera";
 import { ResultadoTestVocacional } from "@/entities/ResultadoTestVocacional";
@@ -20,7 +19,6 @@ export const AppDataSource = new DataSource({
   entities: [
     Usuario,
     Escuela,
-    MaestroEscuela,
     EstudianteMaestro,
     Carrera,
     ResultadoTestVocacional,

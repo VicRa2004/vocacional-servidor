@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { initDB } from "@/libs/db";
 import { UsuarioService } from '@/services/usuario.service';
+import {MaestroService} from '@/services/usuarios/maestro.service'
 import { hash } from 'bcrypt';
-import { CreateUsuarioSchema} from "@/schemas/usuario"
+import { CreateUsuarioSchema} from "@/schemas/usuario";
 import {parseSchema} from '@/libs/validate-schema'
 
 // GET - Obtener todos los usuarios
@@ -13,6 +14,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
 
     const rol = searchParams.get("rol");
+
+    if (rol == "maestro") {
+      const maestros = await MaestroService.obtenerTodos();
+      return NextResponse.json(maestros);
+    }
 
     const usuarios = await UsuarioService.obtenerPorRol(rol as "administrador" | "estudiante" | "maestro" | null);
     

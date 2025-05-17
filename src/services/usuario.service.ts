@@ -144,7 +144,7 @@ export class UsuarioService {
     try {
       const nuevoUsuario = usuarioRepository.create({
         ...datos,
-        rol: "maestro"
+        rol: "maestro",
       });
       return await usuarioRepository.save(nuevoUsuario);
     } catch (error) {

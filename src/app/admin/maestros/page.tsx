@@ -20,6 +20,8 @@ const PageMaestros = () => {
     refetch,
   } = useFetch<GetMaestro[]>("/api/usuarios?rol=maestro");
 
+  console.log(maestros);
+
   // Estado para el modal de eliminación
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -141,6 +143,9 @@ const PageMaestros = () => {
                     Departamento
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Escuela
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -167,6 +172,9 @@ const PageMaestros = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
                       {maestro.departamento}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                      {maestro.escuela?.nombre || "Sin escuela"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { initDB } from "@/libs/db";
 import { UsuarioService } from '@/services/usuario.service';
+import { MaestroService } from '@/services/usuarios/maestro.service';
 
 // GET - Obtener un usuario específico
 export async function GET(
@@ -17,6 +18,11 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    if (usuario.rol == "maestro") {
+          const maestro = await MaestroService.obtenerPorId(parseInt(params.id));
+          return NextResponse.json(maestro);
+        }
 
     // Eliminar contraseña de la respuesta
     const { contrasenaHash, ...usuarioSeguro } = usuario;
@@ -72,7 +78,7 @@ export async function PUT(
     }
 
     // Eliminar contraseña de la respuesta
-    const { contrasenaHash, ...usuarioSeguro } = usuarioActualizado;
+    const { contrasenaHash: _, ...usuarioSeguro } = usuarioActualizado;
 
     return NextResponse.json(usuarioSeguro);
   } catch (error) {

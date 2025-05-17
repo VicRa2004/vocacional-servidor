@@ -23,11 +23,11 @@ export class EstudianteCarreraInteres {
   origen?: string;
 
   // Relaciones
-  @ManyToOne("Usuario", usuario => usuario.carrerasInteres)
+  @ManyToOne("Usuario", (usuario: Usuario) => usuario.carrerasInteres)
   @JoinColumn({ name: 'estudiante_id' })
   estudiante!: Usuario;
 
-  @ManyToOne("Carrera", carrera => carrera.estudiantesInteresados)
+  @ManyToOne("Carrera", (carrera: Carrera) => carrera.estudiantesInteresados)
   @JoinColumn({ name: 'carrera_id' })
   carrera!: Carrera;
 }
