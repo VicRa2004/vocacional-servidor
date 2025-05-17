@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -15,40 +15,15 @@ import {
   FaBars,
   FaTimes
 } from 'react-icons/fa';
+import {useAuthStore} from '@/store/auth-store'
 
 export const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('auth-token');
-      const userInfo = localStorage.getItem('usuario');
-      if (token && userInfo) {
-        setIsAuthenticated(true);
-        const user = JSON.parse(userInfo);
-        setUserRole(user.rol);
-      } else {
-        setIsAuthenticated(false);
-        setUserRole('');
-      }
-    };
-
-    checkAuth();
-    window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('auth-token');
-    localStorage.removeItem('usuario');
-    setIsAuthenticated(false);
-    setUserRole('');
-    router.push('/auth/login');
-  };
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const userRole = useAuthStore((state) => state.user?.rol);
+  const logout = useAuthStore((state) => state.logout);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -143,7 +118,10 @@ export const Navbar = () => {
                         Mi Perfil
                       </Link>
                       <button
-                        onClick={handleLogout}
+                        onClick={() => {
+                          logout();
+                          router.push('/auth/login');
+                        }}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-red-600"
                       >
                         Cerrar Sesión
@@ -194,7 +172,8 @@ export const Navbar = () => {
                   </Link>
                   <button
                     onClick={() => {
-                      handleLogout();
+                      logout();
+                      router.push('/auth/login');
                       toggleMobileMenu();
                     }}
                     className="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-red-600 rounded-md text-left"

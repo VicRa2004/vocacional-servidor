@@ -2,35 +2,51 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useAuthStore } from '@/store/auth-store'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 
 interface Props {
   children: React.ReactNode
-  //rol: '' | 'admin' | 'user'
+  allowedRoles?: string[] // Roles permitidos (opcional)
 }
 
-export default function ProtectedRoute({ children }: Props) {
+export default function ProtectedRoute({ children, allowedRoles }: Props) {
   const router = useRouter()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
+
+  const {
+    token,
+    user,
+    isAuthenticated,
+    hasHydrated,
+  } = useAuthStore()
 
   useEffect(() => {
-    // Verificar si estamos en el cliente antes de acceder a localStorage
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('auth-token')
-      
-      if (!token) {
-        router.push('/auth/login')
-      } else {
-        setIsAuthenticated(true)
-      }
-      setLoading(false)
-    }
-  }, [router])
+    if (!hasHydrated) return
 
-  if (loading) {
-    return <div>Cargando...</div> // O un spinner de carga
+    // Si no hay token o no está autenticado, redirige
+    if (!token || !isAuthenticated) {
+      router.push('/auth/login')
+      return
+    }
+
+    // Si hay restricción de roles y el rol no está permitido
+    if (allowedRoles && (!user || !allowedRoles.includes(user.rol))) {
+      router.push('/unauthorized') // o una ruta de acceso denegado
+      return
+    }
+
+  }, [token, isAuthenticated, allowedRoles, user, hasHydrated, router])
+
+  // Mostrar spinner mientras se hidrata Zustand o se valida el rol
+  if (!hasHydrated || !isAuthenticated || (allowedRoles && (!user || !allowedRoles.includes(user.rol)))) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-2">
+        <LoadingSpinner />
+        <p className="text-gray-600">Verificando autenticación...</p>
+      </div>
+    )
   }
 
-  return isAuthenticated ? <>{children}</> : null
+  return <>{children}</>
 }

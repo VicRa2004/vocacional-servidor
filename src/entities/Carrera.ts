@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import type { EstudianteCarreraInteres } from "./EstudianteCarreraInteres";
+import { EstudianteCarreraInteres } from "./EstudianteCarreraInteres";
 
 @Entity({ name: 'carreras' })
 export class Carrera {
@@ -10,23 +10,23 @@ export class Carrera {
   nombre!: string;
 
   @Column({ type: 'text', nullable: true })
-  descripcion?: string;
+  descripcion!: string;
 
   @Column({ name: 'area_conocimiento', length: 50, nullable: true })
-  areaConocimiento?: string;
+  areaConocimiento!: string;
 
   @Column({ name: 'duracion_estimada', length: 20, nullable: true })
-  duracionEstimada?: string;
+  duracionEstimada!: string;
 
   @Column({ name: 'demanda_laboral', length: 20, nullable: true })
-  demandaLaboral?: string;
+  demandaLaboral!: string;
 
   @Column({ name: 'salario_promedio', length: 50, nullable: true })
-  salarioPromedio?: string;
+  salarioPromedio!: string;
 
   @Column({ name: 'competencias_clave', type: 'text', nullable: true })
-  competenciasClave?: string;
+  competenciasClave!: string;
 
-  @OneToMany("EstudianteCarreraInteres", interes => interes.carrera)
+  @OneToMany(() => EstudianteCarreraInteres, (interes) => interes.carrera)
   estudiantesInteresados?: EstudianteCarreraInteres[];
-}
+} 

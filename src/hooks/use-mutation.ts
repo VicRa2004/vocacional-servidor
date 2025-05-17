@@ -2,7 +2,7 @@ import { useState } from "react";
 
 type Methods = "POST" | "PUT" | "DELETE" | "GET";
 
-export const useMutation = <TBody, TRes>(url: string, options?: RequestInit) => {
+export const useMutation = <TBody, TRes>(url: string,options?: RequestInit) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<TRes | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -10,6 +10,7 @@ export const useMutation = <TBody, TRes>(url: string, options?: RequestInit) => 
   const mutate = async (
     body: TBody,
     method: Methods = 'POST',
+    onSuccess?: (data: TRes) => void
   ) => {
     setLoading(true);
     setError(null);
@@ -32,6 +33,10 @@ export const useMutation = <TBody, TRes>(url: string, options?: RequestInit) => 
       const jsonData = await response.json();
       
       setData(jsonData);
+
+      if (onSuccess) {
+        onSuccess(jsonData);
+      }
     } catch (err) {
       const error = err as Error;
       setError(error);

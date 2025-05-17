@@ -9,7 +9,11 @@ export class CarreraService {
   }
 
   static obtenerTodas() {
-    return carreraRepository.find();
+    return carreraRepository.find({
+      order: {
+        id: 1,
+      }
+    });
   }
 
   static obtenerPorId(id: number) {

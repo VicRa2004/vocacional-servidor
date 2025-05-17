@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import type { Usuario } from "./Usuario";
+import type {CarreraSugerida, RespuestaCuestionario, ResultadoJuego} from "@/types/resultado-test"
 
 @Entity({ name: 'resultados_test_vocacional' })
 export class ResultadoTestVocacional {
@@ -12,14 +13,14 @@ export class ResultadoTestVocacional {
   @Column({ name: 'fecha_completado', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fechaCompletado!: Date;
 
-  @Column({ name: 'respuestas_cuestionario', type: 'jsonb', nullable: true })
-  respuestasCuestionario?: any;
+  @Column({ name: 'respuestas_cuestionario', type: 'jsonb', nullable: false })
+  respuestasCuestionario?: RespuestaCuestionario[];
 
-  @Column({ name: 'resultados_juegos', type: 'jsonb', nullable: true })
-  resultadosJuegos?: any;
+  @Column({ name: 'resultados_juegos', type: 'jsonb', nullable: false })
+  resultadosJuegos?: ResultadoJuego[];
 
   @Column({ name: 'carreras_sugeridas', type: 'jsonb', nullable: true })
-  carrerasSugeridas?: any;
+  carrerasSugeridas?: CarreraSugerida[];
 
   @Column({ default: false })
   completado!: boolean;
