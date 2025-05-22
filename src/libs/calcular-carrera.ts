@@ -1,0 +1,40 @@
+import type { Pregunta, Juego, CarreraElegir } from "@/types/resultado-test"
+
+interface OpcionesResultado {
+	preguntas: Pregunta[],
+	juegos: Juego[],
+	id: number,
+}
+
+export const verificarCarrera = ({preguntas, juegos}: OpcionesResultado) => {
+
+	const carrerasMap: Map<number, CarreraElegir> = new Map();
+
+	// Procesar preguntas
+	preguntas.forEach((pregunta) => {
+		pregunta.tiposDeCarrera.forEach((carrera) => {
+			if (!carrerasMap.has(carrera.id)) {
+				carrerasMap.set(carrera.id, { id: carrera.id, puntaje: 0 });
+			}
+			const carreraActual = carrerasMap.get(carrera.id)!;
+			carreraActual.puntaje += pregunta.resultado;
+		});
+	});
+
+	// Procesar juegos
+	juegos.forEach((juego) => {
+		juego.tiposDeCarrera.forEach((carrera) => {
+			if (!carrerasMap.has(carrera.id)) {
+				carrerasMap.set(carrera.id, { id: carrera.id, puntaje: 0 });
+			}
+			const carreraActual = carrerasMap.get(carrera.id)!;
+			carreraActual.puntaje += juego.puntaje;
+		});
+	});
+
+	// Convertir a arreglo, ordenar y tomar los 3 mejores
+	const carrerasArray: CarreraElegir[] = Array.from(carrerasMap.values());
+	carrerasArray.sort((a, b) => b.puntaje - a.puntaje);
+
+	return carrerasArray.slice(0, 3);
+};
