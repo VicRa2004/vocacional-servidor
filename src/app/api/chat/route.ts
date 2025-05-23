@@ -1,17 +1,21 @@
 import { Ollama } from 'ollama';
 import { NextResponse } from 'next/server';
 
-const ollama = new Ollama({ host: 'http://192.168.1.74:11434' });
+const ollama = new Ollama({ host: 'http://localhost:11434' });
 
 export async function POST(request: Request) {
   try {
-    const { messages } = await request.json();
+    const messages = await request.text();
 
     const response = await ollama.chat({
       model: 'gemma3:1b',
-      messages,
+      messages: [
+        {content: messages, role: 'user'}
+      ],
       stream: false, // Petición normal
     });
+
+    console.log(response);
 
     return NextResponse.json(response);
 

@@ -1,5 +1,4 @@
 // app/page.tsx
-import Link from 'next/link';
 import { FaGamepad, FaChartLine, FaUserGraduate, FaLightbulb } from 'react-icons/fa';
 
 export default function HomePage() {
@@ -14,21 +13,7 @@ export default function HomePage() {
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
             CareerCraft transforma el test vocacional en una experiencia lúdica para ayudarte a encontrar tu camino profesional.
           </p>
-          <div className="mt-8 flex justify-center space-x-4">
-            <Link
-              href="/test"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
-            >
-              Comenzar Test
-              <FaGamepad className="ml-2" />
-            </Link>
-            <Link
-              href="/demo"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-            >
-              Ver Demo
-            </Link>
-          </div>
+          
         </div>
       </div>
 
@@ -124,12 +109,11 @@ export default function HomePage() {
           <p className="mt-4 text-lg leading-6 text-indigo-200">
             Comienza ahora y en menos de 30 minutos tendrás recomendaciones personalizadas basadas en tus habilidades e intereses.
           </p>
-          <Link
-            href="/register"
+          <button
             className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 sm:w-auto"
           >
             Comenzar ahora
-          </Link>
+          </button>
         </div>
       </div>
     </main>

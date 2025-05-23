@@ -1,31 +1,46 @@
-import {ResultadoTestVocacionalService} from "@/services/resultadoTestVocacional.service"
-
+import { parseSchema } from "@/libs/validate-schema";
+import { UserTestResultadoSchema } from "@/schemas/resultados";
+import { ResultadoTestVocacionalService } from "@/services/resultadoTestVocacional.service";
 import { NextResponse } from "next/server";
+import {initDB} from '@/libs/db'
 
-export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+export async function GET() {
 
-    if (!id) {
-        return NextResponse.json({ error: "ID no proporcionado" }, { status: 400 });
-    }
+  await initDB();
 
-    const resultado = await ResultadoTestVocacionalService.obtenerPorId(parseInt(id));
-    
-    return NextResponse.json(resultado);
+  const resultado = await ResultadoTestVocacionalService.obtenerTodos();
+
+  return NextResponse.json(resultado);
 }
 
 export async function POST(request: Request) {
-    const body = await request.json();
-    const { id, resultado } = body;
+  try {
 
-    if (!id || !resultado) {
-        return NextResponse.json({ error: "ID o resultado no proporcionado" }, { status: 400 });
-    }
+    const body = await request.json();
+
+    console.log(JSON.stringify(body));
+
+    await initDB();
+
+    const { id, juegos, preguntas } = parseSchema(
+      UserTestResultadoSchema,
+      body
+    );
 
     const resultadoCreado = await ResultadoTestVocacionalService.crear({
-        
+        completado: true,
+        estudianteId: id,
+        resultadosJuegos: juegos,
+        resultadosPreguntas: preguntas,
     });
-    
+
     return NextResponse.json(resultadoCreado);
+    //return NextResponse.json('se creo con exito, "la verdad no"');
+  } catch (error) {
+     console.error('Error al guardar el resultado:', error);
+    return NextResponse.json(
+      { error: 'Error al guardar el resultado' },
+      { status: 500 }
+    );
+  }
 }

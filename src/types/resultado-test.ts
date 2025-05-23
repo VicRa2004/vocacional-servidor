@@ -1,10 +1,3 @@
-/**
- * Tipos que necesito:
- * - respuestas Cuestionario
- * - resultados juegos
- * - carreras
- */
-
 type Carrera = {
 	id: number;
 	nombre: string;
@@ -24,5 +17,15 @@ export type Juego = {
 
 export type CarreraElegir = {
 	id: number;
+	nombre: string;
 	puntaje: number; // Puntaje para saber cuanto se escoge.
+}
+
+
+// Ejemplo para schema
+
+export type UserTestResultado = {
+	id: number,
+	preguntas: Pregunta[],
+	juegos: Juego[],
 }

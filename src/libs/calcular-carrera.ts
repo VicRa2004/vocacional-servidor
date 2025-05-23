@@ -1,20 +1,24 @@
-import type { Pregunta, Juego, CarreraElegir } from "@/types/resultado-test"
+import type { Pregunta, Juego } from "@/types/resultado-test";
+
+export type CarreraElegir = {
+	id: number;
+	nombre: string;
+	puntaje: number;
+};
 
 interface OpcionesResultado {
 	preguntas: Pregunta[],
 	juegos: Juego[],
-	id: number,
 }
 
-export const verificarCarrera = ({preguntas, juegos}: OpcionesResultado) => {
-
+export const verificarCarrera = ({ preguntas, juegos }: OpcionesResultado): CarreraElegir[] => {
 	const carrerasMap: Map<number, CarreraElegir> = new Map();
 
 	// Procesar preguntas
 	preguntas.forEach((pregunta) => {
 		pregunta.tiposDeCarrera.forEach((carrera) => {
 			if (!carrerasMap.has(carrera.id)) {
-				carrerasMap.set(carrera.id, { id: carrera.id, puntaje: 0 });
+				carrerasMap.set(carrera.id, { id: carrera.id, nombre: carrera.nombre, puntaje: 0 });
 			}
 			const carreraActual = carrerasMap.get(carrera.id)!;
 			carreraActual.puntaje += pregunta.resultado;
@@ -25,7 +29,7 @@ export const verificarCarrera = ({preguntas, juegos}: OpcionesResultado) => {
 	juegos.forEach((juego) => {
 		juego.tiposDeCarrera.forEach((carrera) => {
 			if (!carrerasMap.has(carrera.id)) {
-				carrerasMap.set(carrera.id, { id: carrera.id, puntaje: 0 });
+				carrerasMap.set(carrera.id, { id: carrera.id, nombre: carrera.nombre, puntaje: 0 });
 			}
 			const carreraActual = carrerasMap.get(carrera.id)!;
 			carreraActual.puntaje += juego.puntaje;
